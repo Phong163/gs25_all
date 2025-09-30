@@ -1,4 +1,4 @@
-# Sử dụng base image có CUDA Toolki
+# Sử dụng base image có CUDA Toolkit
 FROM nvidia/cuda:12.2.0-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -24,24 +24,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Cài numpy trước để tránh lỗi khi install deep-person-reid
-RUN pip3 install numpy Cython
-
+# Cài numpy trước để tránh lỗi khi install deep-person-re
+RUN pip3 install numpy
 
 # Cài requirements chung trước (không chứa deep-person-reid)
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
-
-# Cài deep-person-reid sau (nó cần numpy đã có sẵn)
-RUN pip3 install git+https://github.com/KaiyangZhou/deep-person-reid.git
-
-# Sao chép mã nguồ
+# Sao chép mã nguồn
 WORKDIR /app
 COPY . .
 
-RUN apt-get update && apt-get install -y tzdata
-# Thiết lập múi giờ Việt Nam
-ENV TZ=Asia/Ho_Chi_Minh
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Lệnh mặc định khi chạy container
 CMD ["python3", "your_script.py"]
